@@ -1,0 +1,1 @@
+export default function Loading(){return <div style={{minHeight:"100vh",display:"grid",placeItems:"center",background:"#07111F",color:"#EAF2FF",fontFamily:"system-ui"}}><div aria-live="polite">Loading ACE Exchange…</div></div>}

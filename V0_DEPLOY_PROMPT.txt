@@ -1,0 +1,11 @@
+Deploy the complete ACE Exchange V6 Launch Candidate from this package.
+
+Preserve the deep navy / electric-blue / cyan ACE Exchange identity and the “Trade. Create. Connect.” homepage. Do not import ACE Trading Frameworks styling.
+
+Run dependency installation, TypeScript, Next.js production build and every script under `npm run verify`. Fix any build/runtime error without deleting routes or weakening the fail-closed security/provider gates.
+
+Verify all routes in ROUTE_MAP.md. Keep registration and every real-money feature disabled until the required production providers and explicit approval gates in `.env.example` are configured.
+
+Do not fabricate live balances, orders, deposits, withdrawals, KYC approvals, card issuance, governance votes or provider readiness.
+
+Deploy to Preview, test mobile + desktop + protected routes, then publish/promote the verified build. Return the production URL, deployment ID, build result, route count, missing environment variables/providers and `/admin/launch-readiness` conclusion.

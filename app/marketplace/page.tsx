@@ -1,0 +1,2 @@
+import FeaturePage from "../FeaturePage";
+export default function Page(){return <FeaturePage kicker={"ACE CREATOR"} title={"Creator"} accent={"Marketplace."} intro={"Future marketplace for digital products, memberships, tools, education and creator content."} status={[["Catalog", "Frontend ready", "ready"], ["Payments", "Provider required", "blocked"], ["Payouts", "Provider required", "blocked"]]} cards={[["Discovery", "Categories, search, creator and ratings."], ["Purchase flow", "Provider-gated checkout."], ["Library", "Account-owned digital purchases."]]} links={[]} />;}

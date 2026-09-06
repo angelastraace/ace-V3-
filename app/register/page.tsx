@@ -1,0 +1,6 @@
+import PlatformShell from "../PlatformShell";
+import AuthForm from "../AuthForm";
+import styles from "../PlatformShell.module.css";
+import { featureFlags, coreAccountReady } from "../../lib/config";
+export const dynamic="force-dynamic";
+export default function Register(){const enabled=featureFlags.registration&&coreAccountReady();return <PlatformShell><main className={styles.main}><div className={styles.kicker}>ACE IDENTITY</div><section className={styles.hero}><div><h1>Create<br/><span>Account.</span></h1><p>Real account creation is available only when the production identity, email, monitoring, audit and abuse-control stack has been verified.</p>{!enabled&&<div className={styles.notice}>Registration is currently closed. This is intentional: ACE does not create local demo users or accept accounts before the production onboarding stack is ready.</div>}</div><aside className={styles.status}><div className={styles.statusRow}><span>Registration</span><strong className={enabled?styles.ready:styles.partial}>{enabled?"Enabled":"Closed"}</strong></div><div className={styles.statusRow}><span>Demo accounts</span><strong className={styles.ready}>Never created</strong></div></aside></section>{enabled&&<section className={styles.section}><AuthForm mode="register"/></section>}</main></PlatformShell>}

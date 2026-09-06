@@ -1,0 +1,2 @@
+import FeaturePage from "../../FeaturePage";
+export default function Page(){return <FeaturePage kicker={"ACE CARD"} title={"ACE"} accent={"Rewards."} intro={"Configurable cashback or points architecture that stays disabled until funded and legally approved."} status={[["Rules", "Backend configurable", "partial"], ["Payouts", "Disabled", "blocked"], ["Frontend", "Ready", "ready"]]} cards={[["Cashback", "Optional issuer/program reward model."], ["Points", "Non-cash engagement architecture."], ["History", "Auditable reward events and status."]]} links={[]} />;}

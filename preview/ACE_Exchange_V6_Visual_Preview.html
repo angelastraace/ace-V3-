@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ACE Exchange — V6 Launch Candidate Preview</title>
+<meta name="description" content="ACE Exchange V6 launch candidate preview — Trade. Create. Connect." />
+<style>
+:root{
+  --bg:#07111F;--bg2:#0A1B35;--surface:#102746;--surface2:#0C1728;
+  --blue:#2563EB;--blue2:#3B82F6;--cyan:#22D3EE;--white:#FFFFFF;
+  --soft:#EAF2FF;--muted:#94A3B8;--line:rgba(148,163,184,.18);
+  --green:#22c55e;--red:#ef4444;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:
+ radial-gradient(circle at 75% 10%,rgba(37,99,235,.16),transparent 28%),
+ linear-gradient(180deg,var(--bg),#050b13 70%);
+ color:var(--white);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+a{color:inherit;text-decoration:none}
+header{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:17px 5vw;border-bottom:1px solid var(--line);background:rgba(7,17,31,.78);backdrop-filter:blur(18px)}
+.brand{display:flex;gap:11px;align-items:center}.mark{width:34px;height:34px;border:1px solid rgba(59,130,246,.45);border-radius:10px;display:grid;place-items:center;background:linear-gradient(145deg,rgba(37,99,235,.25),rgba(34,211,238,.08));box-shadow:0 0 28px rgba(37,99,235,.15);font-weight:800}
+.brand strong{display:block;letter-spacing:.08em}.brand small{color:var(--muted);font-size:9px;letter-spacing:.21em}
+nav{display:flex;gap:27px;color:#cbd5e1;font-size:13px}nav a:hover{color:var(--cyan)}
+.actions{display:flex;align-items:center;gap:10px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:11px 15px;border-radius:9px;border:1px solid rgba(59,130,246,.36);background:linear-gradient(135deg,var(--blue),var(--blue2));font-size:12px;font-weight:700;box-shadow:0 8px 28px rgba(37,99,235,.18)}
+.btn.alt{background:rgba(16,39,70,.42);box-shadow:none;color:#dbeafe}
+.hero{min-height:720px;display:grid;grid-template-columns:1.04fr .96fr;gap:70px;align-items:center;padding:85px 7vw 90px;border-bottom:1px solid var(--line)}
+.kicker,.label{color:#7dd3fc;font-size:10px;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
+.kicker:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 16px rgba(34,211,238,.75);margin-right:9px}
+h1{font-size:clamp(66px,7vw,112px);line-height:.88;letter-spacing:-.065em;margin:24px 0 30px;font-weight:720}
+h1 span,h2 span{background:linear-gradient(90deg,#fff,#60a5fa 58%,#67e8f9);-webkit-background-clip:text;color:transparent}
+.lead{max-width:700px;color:#9fb0c5;font-size:18px;line-height:1.7}
+.hero-actions{display:flex;gap:12px;margin-top:30px}
+.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:42px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--line)}
+.meta div{padding:17px;background:rgba(8,20,36,.92)}.meta small{display:block;color:#607086;font-size:8px;letter-spacing:.15em}.meta strong{display:block;margin-top:5px;font-size:12px}
+.terminal{border:1px solid rgba(59,130,246,.25);border-radius:18px;overflow:hidden;background:linear-gradient(180deg,rgba(16,39,70,.64),rgba(8,18,31,.92));box-shadow:0 28px 80px rgba(0,0,0,.32)}
+.tbar{display:flex;justify-content:space-between;padding:16px 19px;border-bottom:1px solid var(--line);color:#9fb0c5;font-size:9px;letter-spacing:.14em}.live{color:#67e8f9}
+.tbody{padding:24px}.pair{display:flex;align-items:end;justify-content:space-between}.pair strong{font-size:19px}.badge{font-size:8px;padding:6px 8px;border-radius:6px;background:rgba(37,99,235,.18);color:#93c5fd}
+.price{font-size:34px;font-weight:750;margin:26px 0 7px}.sub{color:#64748b;font-size:10px}
+.chart{height:190px;margin:19px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);position:relative;overflow:hidden;background:
+ linear-gradient(rgba(148,163,184,.055) 1px,transparent 1px),
+ linear-gradient(90deg,rgba(148,163,184,.055) 1px,transparent 1px);background-size:54px 48px}
+.chart svg{position:absolute;inset:0;width:100%;height:100%}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{padding:12px;border:1px solid var(--line);border-radius:9px;background:rgba(7,17,31,.52)}.stat small{color:#64748b;font-size:8px}.stat b{display:block;margin-top:4px;font-size:11px}
+.strip{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;padding:19px 5vw;border-bottom:1px solid var(--line);background:#07101d;color:#708198;font-size:9px;letter-spacing:.16em}
+section{padding:90px 7vw;border-bottom:1px solid var(--line)}.heading{display:grid;grid-template-columns:1.2fr .8fr;gap:60px;align-items:end;margin-bottom:42px}
+h2{font-size:clamp(44px,5vw,74px);line-height:.98;letter-spacing:-.055em;margin:14px 0 0}.heading p{color:#8495ab;line-height:1.72;margin:0}
+.market-grid,.eco-grid,.module-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{padding:24px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,rgba(16,39,70,.5),rgba(7,17,31,.88));min-height:150px}.card:hover{border-color:rgba(34,211,238,.33);transform:translateY(-2px);transition:.2s}
+.market-card{display:flex;justify-content:space-between;align-items:center}.sym{font-size:19px;font-weight:760}.name{color:#64748b;font-size:9px;letter-spacing:.14em;margin-top:6px}.feed{color:#93c5fd;font-size:11px;text-align:right}.feed small{display:block;color:#64748b;margin-top:7px}
+.eco-grid{grid-template-columns:repeat(4,1fr)}.eco{min-height:290px;display:flex;flex-direction:column}.eco .icon{width:47px;height:47px;border-radius:13px;display:grid;place-items:center;margin:34px 0;border:1px solid rgba(59,130,246,.25);background:rgba(37,99,235,.12);color:#67e8f9}.eco p,.module p{color:#8292a8;line-height:1.65;font-size:13px}.go{margin-top:auto;color:#93c5fd;font-size:11px}
+.modules{background:linear-gradient(180deg,#07111f,#081425)}.module-grid{grid-template-columns:repeat(4,1fr)}.module{min-height:230px}.module b{color:#7dd3fc;font-size:9px;letter-spacing:.14em}.module h3{font-size:20px;margin:42px 0 10px}
+.readiness{display:grid;grid-template-columns:.95fr 1.05fr;gap:45px;padding:42px;border:1px solid rgba(59,130,246,.24);border-radius:18px;background:radial-gradient(circle at 85% 20%,rgba(37,99,235,.18),transparent 30%),rgba(8,20,36,.74)}
+.readiness p{color:#8ea0b6;line-height:1.7}.checks{display:grid;gap:9px}.check{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:rgba(7,17,31,.62);font-size:12px}.ready{color:#67e8f9}.blocked{color:#fbbf24}
+footer{padding:55px 7vw;color:#6f8198;font-size:11px}.foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+@media(max-width:1000px){nav{display:none}.hero{grid-template-columns:1fr;min-height:auto}.eco-grid,.module-grid{grid-template-columns:repeat(2,1fr)}.heading,.readiness{grid-template-columns:1fr}}
+@media(max-width:650px){header{padding:14px 18px}.actions .alt{display:none}.hero,section{padding-left:20px;padding-right:20px}.hero{padding-top:65px;gap:45px}.meta{grid-template-columns:1fr}.market-grid,.eco-grid,.module-grid{grid-template-columns:1fr}.heading{gap:20px}.terminal{border-radius:14px}.stats{grid-template-columns:1fr}.readiness{padding:25px}.strip{justify-content:flex-start}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <a class="brand" href="#top"><span class="mark">A</span><span><strong>ACE</strong><small>EXCHANGE</small></span></a>
+  <nav><a href="#markets">Markets</a><a href="#trade">Trade</a><a href="#wallet">Wallet</a><a href="#ecosystem">Ecosystem</a><a href="#readiness">Readiness</a></nav>
+  <div class="actions"><a class="btn alt" href="#ecosystem">Explore</a><a class="btn" href="#readiness">Get started ↗</a></div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div>
+    <div class="kicker">Digital Asset Ecosystem</div>
+    <h1>Trade.<br><span>Create.</span><br>Connect.</h1>
+    <p class="lead">A premium digital-asset platform connecting markets, ownership, creators, AI, community and governance through one ACE experience.</p>
+    <div class="hero-actions"><a class="btn" href="#trade">Launch exchange ↗</a><a class="btn alt" href="#markets">Explore markets</a></div>
+    <div class="meta"><div><small>PLATFORM</small><strong>Connected</strong></div><div><small>MARKET DATA</small><strong>Live-first</strong></div><div><small>EXPERIENCE</small><strong>Clarity-led</strong></div></div>
+  </div>
+  <div class="terminal" id="trade">
+    <div class="tbar"><span>● ACE MARKET VIEW</span><span class="live">LIVE-FIRST INTERFACE</span></div>
+    <div class="tbody">
+      <div class="pair"><div><small class="sub">MARKET</small><br><strong>BTC / USD</strong></div><span class="badge">SPOT</span></div>
+      <div class="price">Live price</div><div class="sub">Loaded only from a configured production market-data provider.</div>
+      <div class="chart">
+        <svg viewBox="0 0 600 190" preserveAspectRatio="none">
+          <defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#2563EB"/><stop offset="1" stop-color="#22D3EE"/></linearGradient></defs>
+          <path d="M0 156 C65 145 84 166 126 139 S188 112 226 126 S286 106 321 113 S382 75 420 88 S478 58 510 67 S551 45 600 31" fill="none" stroke="url(#g)" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="stats"><div class="stat"><small>24H VOLUME</small><b>Provider feed</b></div><div class="stat"><small>ORDER BOOK</small><b>Integration-ready</b></div><div class="stat"><small>STATUS</small><b class="ready">Fail-closed</b></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="strip"><span>ACE EXCHANGE</span><span>MARKETS</span><span>WALLET</span><span>ACE CARD</span><span>CREATOR</span><span>AI</span><span>COMMUNITY</span><span>GOVERNANCE</span></div>
+
+<section id="markets">
+  <div class="heading"><div><div class="label">Markets</div><h2>Live markets.<br><span>Zero invented data.</span></h2></div><p>Market surfaces are designed to consume live production feeds. If a provider is unavailable, ACE displays a clear unavailable state rather than fabricated pricing.</p></div>
+  <div class="market-grid">
+    <div class="card market-card"><div><div class="sym">BTC / USD</div><div class="name">Bitcoin</div></div><div class="feed">LIVE PROVIDER<small>Required</small></div></div>
+    <div class="card market-card"><div><div class="sym">ETH / USD</div><div class="name">Ethereum</div></div><div class="feed">LIVE PROVIDER<small>Required</small></div></div>
+    <div class="card market-card"><div><div class="sym">SOL / USD</div><div class="name">Solana</div></div><div class="feed">LIVE PROVIDER<small>Required</small></div></div>
+  </div>
+</section>
+
+<section id="ecosystem">
+  <div class="heading"><div><div class="label">ACE Ecosystem</div><h2>More than<br><span>an exchange.</span></h2></div><p>V6 connects the exchange, wallet, card, creator economy, community, governance and AI through a single visual and technical architecture.</p></div>
+  <div class="eco-grid">
+    <div class="card eco"><b>TRADING</b><div class="icon">↗</div><h3>Spot & Advanced</h3><p>Markets, trading terminal, orders, convert and provider-gated execution.</p><span class="go">Explore trading ↗</span></div>
+    <div class="card eco" id="wallet"><b>ASSETS</b><div class="icon">◇</div><h3>ACE Wallet</h3><p>Portfolio, deposit, withdrawal, fiat and transaction surfaces built around a real ledger.</p><span class="go">Explore wallet ↗</span></div>
+    <div class="card eco"><b>PAYMENTS</b><div class="icon">▣</div><h3>ACE Card</h3><p>Premium card experience prepared for an authorized issuer/program integration.</p><span class="go">Explore card ↗</span></div>
+    <div class="card eco"><b>INTELLIGENCE</b><div class="icon">⌁</div><h3>ACE AI / Kat</h3><p>Assistance, discovery and support surfaces integrated into the broader ACE ecosystem.</p><span class="go">Explore AI ↗</span></div>
+  </div>
+</section>
+
+<section class="modules">
+  <div class="heading"><div><div class="label">V6 Platform</div><h2>Launch architecture.<br><span>Built to fail safely.</span></h2></div><p>The codebase now includes provider adapters, feature flags, readiness checks and internal diagnostics so incomplete financial integrations stay visibly blocked instead of appearing live.</p></div>
+  <div class="module-grid">
+    <div class="card module"><b>COMMUNITY</b><h3>Social ecosystem</h3><p>Profiles, feeds, discussions, moderation and reputation-ready surfaces.</p></div>
+    <div class="card module"><b>GOVERNANCE</b><h3>Participation</h3><p>Proposals, voting architecture, delegation, treasury and forum routes.</p></div>
+    <div class="card module"><b>CREATOR</b><h3>Creator economy</h3><p>Creator Hub, marketplace, analytics and payout-provider gating.</p></div>
+    <div class="card module"><b>OPERATIONS</b><h3>Admin & risk</h3><p>Launch readiness, feature controls, provider health, audit and security scaffolding.</p></div>
+  </div>
+</section>
+
+<section id="readiness">
+  <div class="readiness">
+    <div><div class="label">Launch Readiness</div><h2>As close to public<br><span>as code can take us.</span></h2><p>Real-money functions remain disabled until the corresponding production database, authentication, KYC/AML, custody, ledger, liquidity, fiat and card providers are configured and verified.</p><a class="btn" href="#top">Return to top ↑</a></div>
+    <div class="checks">
+      <div class="check"><span>Blue ACE Exchange design</span><b class="ready">READY</b></div>
+      <div class="check"><span>Exchange / Wallet / Governance / Community / Creator routes</span><b class="ready">READY</b></div>
+      <div class="check"><span>Provider gating & readiness controls</span><b class="ready">READY</b></div>
+      <div class="check"><span>Database / Auth / KYC / Custody credentials</span><b class="blocked">CONFIGURE</b></div>
+      <div class="check"><span>Live trading / deposits / withdrawals / card issuance</span><b class="blocked">BLOCKED UNTIL VERIFIED</b></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="foot"><span>© 2026 ACE Exchange — V6 Launch Candidate Preview</span><span>Trade. Create. Connect.</span></div></footer>
+</body></html>

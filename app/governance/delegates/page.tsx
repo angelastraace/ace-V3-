@@ -1,0 +1,2 @@
+import FeaturePage from "../../FeaturePage";
+export default function Page(){return <FeaturePage kicker={"ACE GOVERNANCE"} title={"Voting"} accent={"Delegation."} intro={"Delegate and revoke governance voting authority only when the final governance model supports it."} status={[["Model", "Decision required", "partial"], ["Backend", "Required", "blocked"], ["Frontend", "Ready", "ready"]]} cards={[["Delegates", "Profile participation and track record."], ["Delegation", "Explicit grant and revocation."], ["Transparency", "History of delegated authority."]]} links={[]} />;}

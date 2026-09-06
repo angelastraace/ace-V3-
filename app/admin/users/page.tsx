@@ -1,0 +1,2 @@
+import FeaturePage from "../../FeaturePage";
+export default function Page(){return <FeaturePage kicker={"ACE ADMIN"} title={"User"} accent={"Operations."} intro={"Authorized user management surface for account state, verification and risk review."} status={[["RBAC", "Auth provider required", "blocked"], ["Audit logs", "Provider required", "blocked"], ["UI", "Ready", "ready"]]} cards={[["Users", "Account and verification status."], ["Restrictions", "Product and jurisdiction controls."], ["Risk status", "Provider-derived risk signals."]]} links={[]} />;}

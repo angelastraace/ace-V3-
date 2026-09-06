@@ -1,0 +1,2 @@
+import FeaturePage from "../../FeaturePage";
+export default function Page(){return <FeaturePage kicker={"ACE GOVERNANCE"} title={"Governance"} accent={"Forum."} intro={"Discussion layer for proposals with moderation, replies, following and notifications."} status={[["Read UI", "Ready", "ready"], ["Posting", "Backend required", "blocked"], ["Moderation", "Backend required", "blocked"]]} cards={[["Discussions", "Proposal-linked threads."], ["Replies & reactions", "Community participation."], ["Moderation", "Report, review and enforcement controls."]]} links={[]} />;}

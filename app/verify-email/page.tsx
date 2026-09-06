@@ -1,0 +1,3 @@
+import PlatformShell from "../PlatformShell";import AuthRecoveryForm from "../AuthRecoveryForm";import styles from "../PlatformShell.module.css";
+export const dynamic="force-dynamic";
+export default async function Page({searchParams}:{searchParams:Promise<{token?:string}>}){const {token}=await searchParams;return <PlatformShell><main className={styles.main}><div className={styles.kicker}>ACE IDENTITY</div><section className={styles.hero}><div><h1>Verify<br/><span>Email.</span></h1><p>Email-verification tokens are validated only by the production identity provider.</p></div></section><section className={styles.section}><AuthRecoveryForm mode="verify-email" token={token}/></section></main></PlatformShell>}

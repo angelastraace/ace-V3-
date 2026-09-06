@@ -1,0 +1,2 @@
+import FeaturePage from "../FeaturePage";
+export default function Page(){return <FeaturePage kicker={"ACE ACCOUNT"} title={"Transaction"} accent={"Center."} intro={"Unified view for trades, deposits, withdrawals, conversions, fiat, card and rewards."} status={[["Ledger", "Required", "blocked"], ["Filters", "Frontend ready", "ready"], ["Receipts", "Backend-ready", "partial"]]} cards={[["Unified activity", "One chronological account history."], ["Filtering", "Date, asset, type and status."], ["Receipts", "Traceable IDs without exposing secrets."]]} links={[]} />;}

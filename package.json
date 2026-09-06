@@ -1,0 +1,32 @@
+{
+  "name": "ace-exchange-v6-launch-candidate",
+  "version": "6.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "audit": "node scripts/audit.mjs",
+    "security:audit": "node scripts/security-audit.mjs",
+    "env:check": "node scripts/env-check.mjs",
+    "routes": "node scripts/route-report.mjs",
+    "preflight": "npm run audit && npm run security:audit && npm run env:check && npm run links:audit && npm run routes",
+    "verify": "npm run typecheck && npm run build && npm run preflight",
+    "links:audit": "node scripts/link-audit.mjs"
+  },
+  "dependencies": {
+    "next": "16.1.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "typescript": "5.9.3"
+  }
+}

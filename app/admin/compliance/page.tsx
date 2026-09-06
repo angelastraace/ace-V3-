@@ -1,0 +1,2 @@
+import FeaturePage from "../../FeaturePage";
+export default function Page(){return <FeaturePage kicker={"ACE ADMIN"} title={"Compliance"} accent={"Operations."} intro={"KYC review, sanctions/PEP outcomes and transaction-monitoring queues."} status={[["KYC/AML", "Provider required", "blocked"], ["RBAC", "Required", "blocked"], ["UI", "Ready", "ready"]]} cards={[["KYC reviews", "Pending and exception cases."], ["Monitoring", "Flagged transactions and review status."], ["Restrictions", "Country/product eligibility controls."]]} links={[]} />;}

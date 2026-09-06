@@ -1,0 +1,2 @@
+import FeaturePage from "../../FeaturePage";
+export default function Page(){return <FeaturePage kicker={"ACE COMMUNITY"} title={"Community"} accent={"Groups."} intro={"Join and follow interest communities across the ACE ecosystem."} status={[["Membership", "Backend required", "blocked"], ["Discovery", "Frontend ready", "ready"], ["Moderation", "Backend required", "blocked"]]} cards={[["Crypto", "Market and asset discussion."], ["Creators", "Creator ecosystem communities."], ["Governance", "Structured civic discussion."]]} links={[]} />;}
