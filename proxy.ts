@@ -7,14 +7,27 @@ const protectedPrefixes = [
   "/api/orders", "/api/wallet", "/api/fiat", "/api/card", "/api/kyc", "/api/governance/vote", "/api/community/post", "/api/creator/payout",
 ];
 
+type SessionValidation = {
+  authenticated: boolean;
+  roles: string[];
+  reason: string;
+};
+
+type SessionPayload = {
+  roles?: unknown;
+  user?: { role?: unknown } | null;
+  authenticated?: unknown;
+  id?: unknown;
+};
+
 function isProtected(pathname: string) {
   return protectedPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 }
 
-async function validateSession(request: NextRequest) {
+async function validateSession(request: NextRequest): Promise<SessionValidation> {
   const base = process.env.AUTH_SERVICE_URL;
   const token = process.env.AUTH_SERVICE_TOKEN;
-  if (!base || !token) return { authenticated:false, roles:[] as string[], reason:"auth_not_configured" };
+  if (!base || !token) return { authenticated:false, roles:[], reason:"auth_not_configured" };
 
   const sessionPath = process.env.AUTH_SESSION_PATH || "session";
   try {
@@ -28,12 +41,22 @@ async function validateSession(request: NextRequest) {
       cache: "no-store",
       signal: AbortSignal.timeout(4_000),
     });
-    if (!response.ok) return { authenticated:false, roles:[] as string[], reason:"invalid_session" };
-    const data = await response.json().catch(() => ({}));
-    const roles = Array.isArray(data.roles) ? data.roles.map(String) : data.user?.role ? [String(data.user.role)] : [];
-    return { authenticated:Boolean(data.authenticated ?? data.user ?? data.id), roles, reason:"" };
+    if (!response.ok) return { authenticated:false, roles:[], reason:"invalid_session" };
+
+    const data = await response.json().catch(() => ({})) as SessionPayload;
+    const roles: string[] = Array.isArray(data.roles)
+      ? data.roles.map((role: unknown) => String(role))
+      : data.user?.role != null
+        ? [String(data.user.role)]
+        : [];
+
+    return {
+      authenticated: Boolean(data.authenticated ?? data.user ?? data.id),
+      roles,
+      reason:"",
+    };
   } catch {
-    return { authenticated:false, roles:[] as string[], reason:"auth_unavailable" };
+    return { authenticated:false, roles:[], reason:"auth_unavailable" };
   }
 }
 
@@ -55,7 +78,7 @@ export async function proxy(request: NextRequest) {
   if (pathname.startsWith("/admin")) {
     if (process.env.ENABLE_ADMIN_DASHBOARD !== "true") return new NextResponse("Not Found", { status:404 });
     const allowed = (process.env.AUTH_ADMIN_ROLES || "admin,super_admin").split(",").map((v) => v.trim()).filter(Boolean);
-    if (!session.roles.some((role) => allowed.includes(role))) return new NextResponse("Forbidden", { status:403 });
+    if (!session.roles.some((role: string) => allowed.includes(role))) return new NextResponse("Forbidden", { status:403 });
   }
 
   const response = NextResponse.next();
