@@ -1,5 +1,7 @@
 -- ACE Exchange Preview-only Better Auth bootstrap for Neon SQL Editor.
 -- Before execution: replace <ACE_EXCHANGE_RUNTIME_PASSWORD> inside the quoted string below.
+-- After execution, construct BETTER_AUTH_DATABASE_URL with the pooled host/database from
+-- ACE_NEON_DATABASE_URL, user ace_exchange_runtime, and that password. Do not reuse the owner URL.
 -- This package has no DROP DATABASE, DROP SCHEMA, TRUNCATE, destructive ALTER,
 -- financial/ledger mutation, or existing-data deletion statements.
 

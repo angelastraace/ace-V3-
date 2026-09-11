@@ -21,7 +21,7 @@ A Better Auth configuration failure returns an unauthenticated result. It never 
 
 ## Cutover prerequisites
 
-1. Connect [Neon](https://vercel.com/marketplace/neon/neon) and set the required server-only variables.
+1. Connect [Neon](https://vercel.com/marketplace/neon/neon) and set the required server-only variables. `BETTER_AUTH_DATABASE_URL` must be a pooled URL authenticated as `ace_exchange_runtime`, not the owner/integration URL.
 2. Apply the additive migrations through `pnpm db:migrate` from a trusted environment using a direct Neon connection.
 3. Test an invited/pre-provisioned user sign-in, session persistence, recovery email integration, role assignment, and admin authorization in Preview.
 4. Set `AUTH_MODE=better-auth` only after those tests pass. Keep `ENABLE_REGISTRATION=false`.
