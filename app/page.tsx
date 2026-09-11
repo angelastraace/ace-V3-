@@ -17,16 +17,16 @@ export default function Home() {
   return (
     <main id="top">
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="ACE Exchange home">
+        <a className="brand" href="/" aria-label="ACE Exchange home">
           <span className="brand-symbol">A</span>
           <span className="brand-copy"><strong>ACE</strong><small>EXCHANGE</small></span>
         </a>
 
         <nav className="desktop-nav" aria-label="Primary navigation">
-          <a href="#markets">Markets</a>
+          <a href="/markets">Markets</a>
           <a href="/trading">Trade</a>
           <a href="/wallet">Wallet</a>
-          <a href="#ecosystem">Ecosystem</a>
+          <a href="/more">Ecosystem</a>
           <a href="/about">About</a>
         </nav>
 
@@ -36,10 +36,10 @@ export default function Home() {
           <details className="mobile-menu">
             <summary aria-label="Open menu"><span /><span /><span /></summary>
             <div className="mobile-panel">
-              <a href="#markets">Markets</a>
+              <a href="/markets">Markets</a>
               <a href="/trading">Trade</a>
               <a href="/wallet">Wallet</a>
-              <a href="#ecosystem">Ecosystem</a>
+              <a href="/more">Ecosystem</a>
               <a href="/about">About</a>
               <a href="/login">Sign in</a>
             </div>
@@ -54,7 +54,7 @@ export default function Home() {
           <p className="hero-sub">A modern digital-asset platform connecting markets, ownership, creators and community through one ACE experience.</p>
           <div className="hero-actions">
             <a className="button" href="/trading">Launch exchange <span>↗</span></a>
-            <a className="button button-secondary" href="#markets">Explore markets</a>
+            <a className="button button-secondary" href="/markets">Explore markets</a>
           </div>
           <div className="hero-meta" aria-label="Platform principles">
             <div><small>PLATFORM</small><strong>Connected</strong></div>
@@ -199,7 +199,7 @@ export default function Home() {
             <div className="brand"><span className="brand-symbol">A</span><span className="brand-copy"><strong>ACE</strong><small>EXCHANGE</small></span></div>
             <p>A connected digital-asset ecosystem for markets, ownership, creators and community.</p>
           </div>
-          <div className="footer-column"><h4>Platform</h4><a href="#markets">Markets</a><a href="/trading">Trade</a><a href="/wallet">Wallet</a></div>
+          <div className="footer-column"><h4>Platform</h4><a href="/markets">Markets</a><a href="/trading">Trade</a><a href="/wallet">Wallet</a></div>
           <div className="footer-column"><h4>Ecosystem</h4><a href="/creator">Creator</a><a href="/ai">AI</a><a href="/community">Community</a></div>
           <div className="footer-column"><h4>Company</h4><a href="/about">About</a><a href="/support">Support</a></div>
         </div>

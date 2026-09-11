@@ -232,3 +232,4 @@ footer { padding:70px clamp(22px,7vw,118px) 26px; background:var(--bg); }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+.market-search{width:100%;max-width:360px;margin:0 0 14px;padding:12px 14px;border:1px solid #223247;border-radius:10px;background:#0c1728;color:#edf4ff}.market-favorite{border:1px solid #2b405a;background:transparent;color:#9db4cf;border-radius:8px;padding:7px 9px;font:inherit;font-size:10px;font-weight:700;cursor:pointer}.market-favorite[aria-pressed="true"]{color:#45d4ff;border-color:#45d4ff}.market-symbol{color:#edf4ff;font-weight:750}.market-symbol:hover{text-decoration:underline}@media(max-width:650px){.market-card{grid-template-columns:1fr auto;gap:8px}.market-favorite{grid-column:1/-1;justify-self:start}}
