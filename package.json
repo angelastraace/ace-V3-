@@ -19,7 +19,9 @@
     "links:audit": "node scripts/link-audit.mjs",
     "db:migrate": "node scripts/migrate.mjs",
     "db:migrate:check": "node scripts/migrate-check.mjs",
-    "db:migrate:connection-check": "node scripts/migration-connection-test.mjs"
+    "db:migrate:connection-check": "node scripts/migration-connection-test.mjs",
+    "preview:user:create": "node scripts/provision-preview-user.mjs",
+    "auth:cutover:check": "node scripts/auth-cutover-check.mjs"
   },
   "dependencies": {
     "better-auth": "^1.7.4",
