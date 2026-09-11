@@ -1,10 +1,10 @@
 import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
 import { PostgresDialect } from "kysely";
-import { databaseUrl, getNeonPool } from "./neon";
+import { previewNeonDatabaseUrl, getNeonPool } from "./neon";
 
 export function betterAuthConfigured() {
-  return Boolean(databaseUrl() && process.env.BETTER_AUTH_SECRET?.trim() && process.env.BETTER_AUTH_URL?.trim());
+  return Boolean(previewNeonDatabaseUrl() && process.env.BETTER_AUTH_SECRET?.trim() && process.env.BETTER_AUTH_URL?.trim());
 }
 
 export function getBetterAuth() {

@@ -29,10 +29,10 @@ export const approvalGates = {
 };
 
 export const authMode = process.env.AUTH_MODE === "better-auth" ? "better-auth" : "legacy";
-const betterAuthConfigured = configured(process.env.DATABASE_URL, process.env.BETTER_AUTH_SECRET, process.env.BETTER_AUTH_URL);
+const betterAuthConfigured = configured(process.env.ACE_NEON_DATABASE_URL, process.env.BETTER_AUTH_SECRET, process.env.BETTER_AUTH_URL);
 
 export const providerConfig = {
-  database: configured(process.env.DATABASE_URL),
+  database: authMode === "better-auth" ? configured(process.env.ACE_NEON_DATABASE_URL) : configured(process.env.DATABASE_URL),
   auth: authMode === "better-auth" ? betterAuthConfigured : configured(process.env.AUTH_SERVICE_URL, process.env.AUTH_SERVICE_TOKEN),
   custody: configured(process.env.CUSTODY_API_URL, process.env.CUSTODY_API_KEY),
   ledger: configured(process.env.LEDGER_SERVICE_URL, process.env.LEDGER_SERVICE_TOKEN),
