@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { currentServerSession } from "./lib/server-auth";
 
 const protectedPrefixes = [
   "/account", "/dashboard", "/profile", "/settings", "/notifications", "/verification",
@@ -7,64 +8,16 @@ const protectedPrefixes = [
   "/api/orders", "/api/wallet", "/api/fiat", "/api/card", "/api/kyc", "/api/governance/vote", "/api/community/post", "/api/creator/payout",
 ];
 
-type SessionValidation = {
-  authenticated: boolean;
-  roles: string[];
-  reason: string;
-};
-
-type SessionPayload = {
-  roles?: unknown;
-  user?: { role?: unknown } | null;
-  authenticated?: unknown;
-  id?: unknown;
-};
-
 function isProtected(pathname: string) {
   return protectedPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 }
 
-async function validateSession(request: NextRequest): Promise<SessionValidation> {
-  const base = process.env.AUTH_SERVICE_URL;
-  const token = process.env.AUTH_SERVICE_TOKEN;
-  if (!base || !token) return { authenticated:false, roles:[], reason:"auth_not_configured" };
-
-  const sessionPath = process.env.AUTH_SESSION_PATH || "session";
-  try {
-    const response = await fetch(`${base.replace(/\/$/, "")}/${sessionPath.replace(/^\//, "")}`, {
-      headers: {
-        accept: "application/json",
-        authorization: `Bearer ${token}`,
-        cookie: request.headers.get("cookie") || "",
-        "x-request-id": request.headers.get("x-request-id") || crypto.randomUUID(),
-      },
-      cache: "no-store",
-      signal: AbortSignal.timeout(4_000),
-    });
-    if (!response.ok) return { authenticated:false, roles:[], reason:"invalid_session" };
-
-    const data = await response.json().catch(() => ({})) as SessionPayload;
-    const roles: string[] = Array.isArray(data.roles)
-      ? data.roles.map((role: unknown) => String(role))
-      : data.user?.role != null
-        ? [String(data.user.role)]
-        : [];
-
-    return {
-      authenticated: Boolean(data.authenticated ?? data.user ?? data.id),
-      roles,
-      reason:"",
-    };
-  } catch {
-    return { authenticated:false, roles:[], reason:"auth_unavailable" };
-  }
-}
 
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   if (!isProtected(pathname)) return NextResponse.next();
 
-  const session = await validateSession(request);
+  const session = await currentServerSession(request);
   if (!session.authenticated) {
     if (pathname.startsWith("/api/")) {
       return NextResponse.json({ status:"unauthorized", reason:session.reason }, { status:401, headers:{"cache-control":"no-store"} });

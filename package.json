@@ -16,21 +16,21 @@
     "routes": "node scripts/route-report.mjs",
     "preflight": "npm run audit && npm run security:audit && npm run env:check && npm run links:audit && npm run routes",
     "verify": "npm run typecheck && npm run build && npm run preflight",
-    "links:audit": "node scripts/link-audit.mjs"
+    "links:audit": "node scripts/link-audit.mjs",
+    "db:migrate": "node scripts/migrate.mjs",
+    "db:migrate:check": "node scripts/migrate-check.mjs"
   },
   "dependencies": {
-    "next": "16.2.11",
+    "better-auth": "^1.7.4",
+    "kysely": "^0.29.5",
+    "next": "16.3.3",
+    "pg": "^8.23.0",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
-  "pnpm": {
-    "overrides": {
-      "postcss": "8.5.23",
-      "sharp": "0.35.0"
-    }
-  },
   "devDependencies": {
     "@types/node": "24.10.1",
+    "@types/pg": "^8.23.1",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
     "typescript": "5.9.3"

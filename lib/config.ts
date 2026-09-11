@@ -28,9 +28,12 @@ export const approvalGates = {
   financialProviderValidationApproved: enabled("FINANCIAL_PROVIDER_VALIDATION_APPROVED"),
 };
 
+export const authMode = process.env.AUTH_MODE === "better-auth" ? "better-auth" : "legacy";
+const betterAuthConfigured = configured(process.env.DATABASE_URL, process.env.BETTER_AUTH_SECRET, process.env.BETTER_AUTH_URL);
+
 export const providerConfig = {
   database: configured(process.env.DATABASE_URL),
-  auth: configured(process.env.AUTH_SERVICE_URL, process.env.AUTH_SERVICE_TOKEN),
+  auth: authMode === "better-auth" ? betterAuthConfigured : configured(process.env.AUTH_SERVICE_URL, process.env.AUTH_SERVICE_TOKEN),
   custody: configured(process.env.CUSTODY_API_URL, process.env.CUSTODY_API_KEY),
   ledger: configured(process.env.LEDGER_SERVICE_URL, process.env.LEDGER_SERVICE_TOKEN),
   marketData: configured(process.env.MARKET_DATA_PROVIDER_URL, process.env.MARKET_DATA_PROVIDER_TOKEN),
