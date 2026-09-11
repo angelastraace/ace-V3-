@@ -44,6 +44,7 @@ They default to `false`.
 ## Key files
 
 - `.env.example` — complete integration/feature/approval template.
+- `BETA_STACK.md` — selected controlled-beta providers and provisioning contract.
 - `db/schema.sql` — PostgreSQL reference model for users, assets, ledger, deposits, withdrawals, orders, trades, idempotency and audit.
 - `ROUTE_MAP.md` — generated route inventory.
 - `PRODUCTION_READINESS.md` — source-vs-provider readiness boundary.

@@ -28,6 +28,14 @@ export const approvalGates = {
   financialProviderValidationApproved: enabled("FINANCIAL_PROVIDER_VALIDATION_APPROVED"),
 };
 
+export const betaStackConfig = {
+  neon: configured(process.env.DATABASE_URL),
+  clerk: configured(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, process.env.CLERK_SECRET_KEY),
+  resend: configured(process.env.RESEND_API_KEY, process.env.EMAIL_FROM),
+  sentry: configured(process.env.NEXT_PUBLIC_SENTRY_DSN),
+  upstash: configured(process.env.UPSTASH_REDIS_REST_URL, process.env.UPSTASH_REDIS_REST_TOKEN),
+};
+
 export const providerConfig = {
   database: configured(process.env.DATABASE_URL),
   auth: configured(process.env.AUTH_SERVICE_URL, process.env.AUTH_SERVICE_TOKEN),
