@@ -1,81 +1,13 @@
 "use client";
-
-import { useEffect, useState } from "react";
-
-type Market = {
-  symbol: string;
-  name: string;
-  price: number;
-  change: number;
-};
-
-export default function MarketFeed() {
-  const [markets, setMarkets] = useState<Market[]>([]);
-  const [state, setState] = useState<"loading" | "live" | "unavailable">("loading");
-
-  useEffect(() => {
-    let active = true;
-    const load = async () => {
-      try {
-        const response = await fetch("/api/markets", { cache: "no-store" });
-        const payload = await response.json();
-        if (!active) return;
-        if (response.ok && payload.status === "live" && Array.isArray(payload.markets)) {
-          setMarkets(payload.markets);
-          setState("live");
-        } else {
-          setState("unavailable");
-        }
-      } catch {
-        if (active) setState("unavailable");
-      }
-    };
-    load();
-    const timer = window.setInterval(load, 30000);
-    return () => {
-      active = false;
-      window.clearInterval(timer);
-    };
-  }, []);
-
-  if (state === "loading") {
-    return (
-      <div className="market-grid" aria-label="Loading market data">
-        {[0, 1, 2].map((item) => <div className="market-card skeleton" key={item} />)}
-      </div>
-    );
-  }
-
-  if (state === "unavailable") {
-    return (
-      <div className="market-unavailable" role="status">
-        <span className="status-dot" />
-        Market data temporarily unavailable
-      </div>
-    );
-  }
-
-  return (
-    <div className="market-grid">
-      {markets.map((market) => {
-        const up = market.change >= 0;
-        return (
-          <article className="market-card" key={market.symbol}>
-            <div>
-              <div className="market-symbol">{market.symbol}</div>
-              <div className="market-name">{market.name}</div>
-            </div>
-            <div className="market-right">
-              <div className="market-price">
-                {market.price.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: market.price < 1000 ? 2 : 0 })}
-              </div>
-              <div className={up ? "market-change positive" : "market-change negative"}>
-                {up ? "+" : ""}{market.change.toFixed(2)}%
-              </div>
-            </div>
-          </article>
-        );
-      })}
-    </div>
-  );
+import { useEffect, useMemo, useState } from "react";
+type Market = { symbol:string; name:string; price:number; change:number };
+const formatPrice=(price:number)=>price.toLocaleString("en-US",{style:"currency",currency:"USD",maximumFractionDigits:price<1000?2:0});
+export default function MarketFeed(){
+ const [markets,setMarkets]=useState<Market[]>([]),[state,setState]=useState<"loading"|"live"|"unavailable">("loading"),[query,setQuery]=useState(""),[favorites,setFavorites]=useState<string[]>([]);
+ useEffect(()=>{try{setFavorites(JSON.parse(localStorage.getItem("ace-market-favorites")||"[]"))}catch{};let active=true;const load=async()=>{try{const response=await fetch("/api/markets",{cache:"no-store"});const payload=await response.json();if(!active)return;if(response.ok&&payload.status==="live"&&Array.isArray(payload.markets)){setMarkets(payload.markets);setState("live")}else setState("unavailable")}catch{if(active)setState("unavailable")}};load();const timer=window.setInterval(load,30000);return()=>{active=false;clearInterval(timer)}},[]);
+ const shown=useMemo(()=>markets.filter(m=>`${m.symbol} ${m.name}`.toLowerCase().includes(query.toLowerCase())).sort((a,b)=>Number(favorites.includes(b.symbol))-Number(favorites.includes(a.symbol))),[markets,query,favorites]);
+ const toggle=(symbol:string)=>setFavorites(current=>{const next=current.includes(symbol)?current.filter(x=>x!==symbol):[...current,symbol];localStorage.setItem("ace-market-favorites",JSON.stringify(next));return next});
+ if(state==="loading")return <div className="market-grid" aria-label="Loading market data">{[0,1,2].map(item=><div className="market-card skeleton" key={item}/>)}</div>;
+ if(state==="unavailable")return <div className="market-unavailable" role="status"><span className="status-dot"/>Market data temporarily unavailable. Try again shortly; ACE does not display invented prices.</div>;
+ return <section aria-label="Market discovery"><label className="sr-only" htmlFor="market-search">Search markets</label><input id="market-search" className="market-search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search markets" type="search"/>{shown.length? <div className="market-grid">{shown.map(m=>{const up=m.change>=0;return <article className="market-card" key={m.symbol}><div><a className="market-symbol" href={`/trade/${m.symbol.replace("/","-")}`}>{m.symbol}</a><div className="market-name">{m.name}</div></div><div className="market-right"><div className="market-price">{formatPrice(m.price)}</div><div className={up?"market-change positive":"market-change negative"}>{up?"+":""}{m.change.toFixed(2)}%</div></div><button className="market-favorite" type="button" onClick={()=>toggle(m.symbol)} aria-pressed={favorites.includes(m.symbol)} aria-label={`Toggle ${m.symbol} watchlist`}>{favorites.includes(m.symbol)?"Saved":"Watch"}</button></article>})}</div>:<div className="market-unavailable" role="status">No markets match “{query}”. Clear search to view the live feed.</div>}</section>
 }
