@@ -1,3 +1,3 @@
-import FeaturePage from "../FeaturePage";
-export const metadata={title:"Help Center",description:"ACE Exchange product, security and account support."};
-export default function Page(){return <FeaturePage kicker="ACE SUPPORT" title="Help" accent="Center." intro="Find safe guidance for markets, account access, security, legal information and platform availability. Ticket submission remains unavailable until a verified support backend is connected." status={[["Knowledge base","Available","ready"],["Ticket submission","Support backend required","blocked"],["Security escalation","Use verified support channel","partial"]]} cards={[["Account access","Sign-in, recovery and account availability guidance."],["Markets","Public-market discovery and read-only data explanations."],["Security","How ACE protects unavailable features and sensitive actions."]]} links={[["/security","Security center","Protect your account"],["/status","Platform status","Current service information"],["/fees","Fees","Product pricing disclosures"],["/legal/terms","Terms","Read platform terms"]]}/>}
+import { HelpWorkspace } from "../SafeWorkspaces";
+export const metadata={title:"ACE Exchange Support",description:"Help Center and supported contact options."};
+export default function Page(){return <HelpWorkspace/>}
