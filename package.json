@@ -18,7 +18,8 @@
     "verify": "npm run typecheck && npm run build && npm run preflight",
     "links:audit": "node scripts/link-audit.mjs",
     "db:migrate": "node scripts/migrate.mjs",
-    "db:migrate:check": "node scripts/migrate-check.mjs"
+    "db:migrate:check": "node scripts/migrate-check.mjs",
+    "db:migrate:connection-check": "node scripts/migration-connection-test.mjs"
   },
   "dependencies": {
     "better-auth": "^1.7.4",

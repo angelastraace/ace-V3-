@@ -2,9 +2,10 @@ import { createHash } from "node:crypto";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { Pool } from "pg";
+import { migrationConnection } from "./migration-connection.mjs";
 
-const connectionString = process.env.DATABASE_URL_DIRECT || process.env.DATABASE_URL;
-if (!connectionString) throw new Error("DATABASE_URL_DIRECT (preferred) or DATABASE_URL is required for migrations.");
+const { source, value: connectionString } = migrationConnection();
+console.log(`Migration mode enabled; connection source = ${source}`);
 const migrationDir = path.join(process.cwd(), "db/migrations");
 const pool = new Pool({ connectionString, max: 1 });
 
