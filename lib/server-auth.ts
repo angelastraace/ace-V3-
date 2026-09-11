@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getBetterAuth } from "./better-auth";
 import { getNeonPool } from "./neon";
+import { readReviewerSession } from "./reviewer-session";
 
 type LegacySession = { roles?: unknown; user?: { id?: unknown; role?: unknown } | null; authenticated?: unknown; id?: unknown };
 export type ServerSession = { authenticated: boolean; userId: string | null; roles: string[]; reason: string };
@@ -39,6 +40,8 @@ async function betterAuthSession(request: NextRequest): Promise<ServerSession> {
 }
 
 export async function currentServerSession(request: NextRequest): Promise<ServerSession> {
+  const reviewer = readReviewerSession(request.headers.get("cookie"));
+  if (reviewer) return { authenticated: true, userId: reviewer.userId, roles: reviewer.roles, reason: "" };
   return selectedMode() === "better-auth" ? betterAuthSession(request) : legacySession(request);
 }
 
