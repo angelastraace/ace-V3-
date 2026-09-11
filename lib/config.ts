@@ -1,9 +1,11 @@
+import { resolveBetterAuthOrigin } from "./auth-origin";
+
 export type FeatureKey =
   | "registration" | "trading" | "deposits" | "withdrawals" | "fiat" | "card" | "governanceVoting"
   | "creatorPayouts" | "marketplace" | "communityWrites" | "advancedTrading" | "adminDashboard";
 
 const enabled = (name: string) => process.env[name] === "true";
-const configured = (...values: Array<string | undefined>) => values.every((value) => Boolean(value?.trim()));
+const configured = (...values: Array<string | null | undefined>) => values.every((value) => Boolean(value?.trim()));
 
 export const featureFlags: Record<FeatureKey, boolean> = {
   registration: enabled("ENABLE_REGISTRATION"),
@@ -29,7 +31,7 @@ export const approvalGates = {
 };
 
 export const authMode = process.env.AUTH_MODE === "better-auth" ? "better-auth" : "legacy";
-const betterAuthConfigured = configured(process.env.BETTER_AUTH_DATABASE_URL, process.env.BETTER_AUTH_SECRET, process.env.BETTER_AUTH_URL);
+const betterAuthConfigured = configured(process.env.BETTER_AUTH_DATABASE_URL, process.env.BETTER_AUTH_SECRET, resolveBetterAuthOrigin());
 
 export const providerConfig = {
   database: authMode === "better-auth" ? configured(process.env.BETTER_AUTH_DATABASE_URL) : configured(process.env.DATABASE_URL),
