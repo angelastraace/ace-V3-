@@ -3,10 +3,9 @@ import { createReviewerSession, previewReviewerCookie, previewReviewerEnabled } 
 
 export async function POST(request: NextRequest) {
   if (!previewReviewerEnabled()) return NextResponse.json({ status: "not_found" }, { status: 404 });
-  const input = await request.json().catch(() => null) as { password?: unknown; role?: unknown } | null;
-  const password = process.env.ACE_PREVIEW_USER_PASSWORD?.trim();
-  if (!input || typeof input.password !== "string" || input.password !== password || (input.role !== "user" && input.role !== "admin")) {
-    return NextResponse.json({ status: "unauthorized", reason: "Invalid reviewer credentials" }, { status: 401, headers: { "cache-control": "no-store" } });
+  const input = await request.json().catch(() => null) as { role?: unknown } | null;
+  if (!input || (input.role !== "user" && input.role !== "admin")) {
+    return NextResponse.json({ status: "invalid_request" }, { status: 400, headers: { "cache-control": "no-store" } });
   }
   const session = createReviewerSession(input.role);
   if (!session) return NextResponse.json({ status: "blocked" }, { status: 503 });

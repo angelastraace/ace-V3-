@@ -7,8 +7,7 @@ type ReviewerSession = { userId: string; roles: ReviewerRole[] };
 
 function reviewerEnabled() {
   return process.env.VERCEL_ENV === "preview"
-    && process.env.VERCEL_GIT_COMMIT_REF === expectedBranch
-    && Boolean(process.env.ACE_PREVIEW_USER_PASSWORD?.trim());
+    && process.env.VERCEL_GIT_COMMIT_REF === expectedBranch;
 }
 
 function signature(payload: string) {
