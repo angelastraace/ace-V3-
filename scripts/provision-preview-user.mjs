@@ -10,19 +10,22 @@ const role = valueFor("--role");
 const password = process.env.ACE_PREVIEW_USER_PASSWORD;
 
 function fail(message) { console.error(`preview-user-create: ${message}`); process.exit(1); }
-if (process.env.VERCEL_ENV !== "preview" && process.env.ACE_TRUSTED_PREVIEW_EXECUTION !== "true") fail("Preview execution is required");
-if (process.env.VERCEL_GIT_COMMIT_REF && process.env.VERCEL_GIT_COMMIT_REF !== expectedBranch) fail("auth-test branch execution is required");
+if (process.env.VERCEL_ENV === "production") fail("Production execution is forbidden");
+if (process.env.VERCEL_ENV !== "preview") fail("Preview execution is required");
+if (process.env.VERCEL_GIT_COMMIT_REF !== expectedBranch) fail("auth-test branch execution is required");
 if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) fail("a valid --email is required");
 if (!password || password.length < 12) fail("ACE_PREVIEW_USER_PASSWORD must be at least 12 characters");
 if (role !== "user" && role !== "admin") fail("--role must be user or admin");
 const connectionString = process.env.BETTER_AUTH_DATABASE_URL?.trim();
 const secret = process.env.BETTER_AUTH_SECRET?.trim();
-if (!connectionString || !secret) fail("BETTER_AUTH_DATABASE_URL and BETTER_AUTH_SECRET are required");
 const host = process.env.VERCEL_URL?.trim();
-const baseURL = host ? `https://${host}` : process.env.ACE_TRUSTED_PREVIEW_ORIGIN?.trim();
-if (!baseURL) fail("VERCEL_URL or ACE_TRUSTED_PREVIEW_ORIGIN is required");
+if (!connectionString || !secret) fail("BETTER_AUTH_DATABASE_URL and BETTER_AUTH_SECRET are required");
+if (!host) fail("VERCEL_URL is required for Preview execution");
+const baseURL = `https://${host}`;
 
 const pool = new Pool({ connectionString, max: 1 });
+// This server-only instance intentionally permits sign-up only for this CLI invocation.
+// The deployed auth instance has disableSignUp enabled and its route blocks sign-up paths.
 const auth = betterAuth({
   appName: "ACE Exchange Preview Provisioner",
   baseURL,
@@ -35,7 +38,10 @@ const auth = betterAuth({
 try {
   const existing = await pool.query('SELECT id FROM "user" WHERE email = $1', [email]);
   if (existing.rowCount) fail("identity already exists; refusing role changes");
-  const result = await auth.api.signUpEmail({ body: { name: email.split("@")[0], email, password }, headers: new Headers({ origin: baseURL }) });
+  const result = await auth.api.signUpEmail({
+    body: { name: email.split("@")[0], email, password, rememberMe: false },
+    headers: new Headers({ origin: baseURL }),
+  });
   const userId = result.user.id;
   const client = await pool.connect();
   try {
@@ -48,7 +54,7 @@ try {
     throw error;
   } finally { client.release(); }
   console.log(JSON.stringify({ status: "created", userId, email, role }));
-} catch (error) {
+} catch {
   console.error("preview-user-create: provisioning failed");
   process.exitCode = 1;
 } finally {

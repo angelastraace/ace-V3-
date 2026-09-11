@@ -8,23 +8,28 @@ export function betterAuthConfigured() {
   return Boolean(betterAuthDatabaseUrl() && process.env.BETTER_AUTH_SECRET?.trim() && resolveBetterAuthOrigin());
 }
 
+/** Returns null for any incomplete or invalid configuration; callers must deny access. */
 export function getBetterAuth() {
-  const pool = getNeonPool();
-  if (!pool || !betterAuthConfigured()) return null;
+  try {
+    const pool = getNeonPool();
+    if (!pool || !betterAuthConfigured()) return null;
 
-  const baseURL = resolveBetterAuthOrigin();
-  if (!baseURL) return null;
-  return betterAuth({
-    appName: "ACE Exchange",
-    baseURL,
-    basePath: "/api/auth",
-    secret: process.env.BETTER_AUTH_SECRET!,
-    database: new PostgresDialect({ pool }),
-    emailAndPassword: {
-      enabled: true,
-      disableSignUp: true,
-      minPasswordLength: 12,
-    },
-    plugins: [nextCookies()],
-  });
+    const baseURL = resolveBetterAuthOrigin();
+    if (!baseURL) return null;
+    return betterAuth({
+      appName: "ACE Exchange",
+      baseURL,
+      basePath: "/api/auth",
+      secret: process.env.BETTER_AUTH_SECRET!,
+      database: new PostgresDialect({ pool }),
+      emailAndPassword: {
+        enabled: true,
+        disableSignUp: true,
+        minPasswordLength: 12,
+      },
+      plugins: [nextCookies()],
+    });
+  } catch {
+    return null;
+  }
 }

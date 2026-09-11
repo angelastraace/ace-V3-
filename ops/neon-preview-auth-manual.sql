@@ -71,7 +71,7 @@ END; $$;
 GRANT USAGE ON SCHEMA public TO ace_exchange_runtime;
 REVOKE CREATE ON SCHEMA public FROM ace_exchange_runtime;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "user", session, account, verification TO ace_exchange_runtime;
-GRANT SELECT ON TABLE user_roles TO ace_exchange_runtime;
+GRANT SELECT, INSERT ON TABLE user_roles TO ace_exchange_runtime;
 GRANT INSERT ON TABLE audit_events TO ace_exchange_runtime;
 GRANT USAGE, SELECT ON SEQUENCE audit_events_id_seq TO ace_exchange_runtime;
 REVOKE UPDATE, DELETE, TRUNCATE ON TABLE audit_events FROM ace_exchange_runtime;
@@ -81,7 +81,7 @@ COMMIT;
 SELECT tablename FROM pg_tables WHERE schemaname='public' AND tablename IN ('user','session','account','verification','user_roles','audit_events','schema_migrations') ORDER BY tablename;
 SELECT id, checksum, applied_at FROM schema_migrations WHERE id IN ('001_better_auth.sql','002_audit_events.sql') ORDER BY id;
 SELECT rolname, rolcanlogin, rolsuper, rolcreatedb, rolcreaterole, rolreplication, rolbypassrls FROM pg_roles WHERE rolname='ace_exchange_runtime';
-SELECT privilege_type FROM information_schema.role_table_grants WHERE grantee='ace_exchange_runtime' AND table_name='audit_events' ORDER BY privilege_type;
+SELECT table_name, privilege_type FROM information_schema.role_table_grants WHERE grantee='ace_exchange_runtime' AND table_name IN ('user_roles','audit_events') ORDER BY table_name, privilege_type;
 -- In a separate SQL Editor connection authenticated as ace_exchange_runtime, run:
 -- INSERT INTO audit_events(event_type, action, result_status) VALUES ('runtime_grant_validation','insert','success');
 -- UPDATE audit_events SET result_status='tampered' WHERE event_type='runtime_grant_validation'; -- must fail
