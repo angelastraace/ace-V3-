@@ -1,0 +1,11 @@
+"use client";
+import { useState } from "react";
+import PlatformShell from "./PlatformShell";
+import styles from "./PlatformShell.module.css";
+
+type Card=[string,string]; type Link=[string,string,string];
+export default function ProductSurface({kicker,title,accent,intro,status,cards,links=[],notice}:{kicker:string;title:string;accent:string;intro:string;status:[string,string,"ready"|"partial"|"blocked"][];cards:Card[];links?:Link[];notice?:string}){
+ const [message,setMessage]=useState(""); const blocked=status.find(([,label,state])=>state==="blocked")?.[1];
+ const copy=async()=>{try{await navigator.clipboard.writeText(window.location.href);setMessage("Page link copied to this device.")}catch{setMessage("Copy is unavailable in this browser.")}};
+ return <PlatformShell><main className={styles.main}><div className={styles.kicker}>{kicker}</div><section className={styles.hero}><div><h1>{title}<br/><span>{accent}</span></h1><p>{intro}</p>{notice&&<div className={styles.notice}>{notice}</div>}<div className={styles.localActions}><button type="button" className={styles.ghost} onClick={copy}>Copy page link</button>{blocked&&<button type="button" className={styles.ghost} onClick={()=>setMessage(`${blocked}: this function is intentionally unavailable in this environment.`)}>Why unavailable?</button>}</div>{message&&<p className={styles.muted} role="status">{message}</p>}</div><aside className={styles.status}>{status.map(([label,value,state])=><div className={styles.statusRow} key={label}><span>{label}</span><strong className={styles[state]}>{value}</strong></div>)}</aside></section><section className={styles.section}><div className={styles.kicker}>AVAILABLE ON THIS PAGE</div><div className={styles.grid}>{cards.map(([heading,description],index)=><article className={styles.card} key={heading}><small>0{index+1}</small><h3>{heading}</h3><p>{description}</p></article>)}</div></section>{links.length>0&&<section className={styles.section}><div className={styles.kicker}>CONTINUE</div><div className={styles.links}>{links.map(([href,label,description])=><a className={styles.linkCard} href={href} key={href}><strong>{label} ↗</strong><span>{description}</span></a>)}</div></section>}</main></PlatformShell>;
+}
