@@ -156,6 +156,15 @@ CREATE TABLE IF NOT EXISTS audit_events (
 CREATE INDEX IF NOT EXISTS audit_events_created_idx ON audit_events(created_at DESC);
 CREATE INDEX IF NOT EXISTS audit_events_resource_idx ON audit_events(resource_type, resource_id, created_at DESC);
 
+
+-- Liquidity router V1: simulation-only reference entities. No provider credentials or custody keys are stored.
+CREATE TABLE IF NOT EXISTS reward_backing_sources (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), source_type text NOT NULL CHECK (source_type IN ('PROTOCOL_REVENUE','SPONSOR','PARTNER','TREASURY','CREDIT')), approved_amount numeric(38,18) NOT NULL CHECK (approved_amount >= 0), allocated_amount numeric(38,18) NOT NULL DEFAULT 0 CHECK (allocated_amount >= 0), status text NOT NULL CHECK (status IN ('pending','approved','cancelled')), created_at timestamptz NOT NULL DEFAULT now(), CHECK (allocated_amount <= approved_amount));
+CREATE TABLE IF NOT EXISTS reward_accruals (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), user_id uuid NOT NULL REFERENCES users(id), backing_source_id uuid NOT NULL REFERENCES reward_backing_sources(id), amount_usd numeric(38,18) NOT NULL CHECK (amount_usd > 0), state text NOT NULL CHECK (state IN ('EARNED','VESTED','RESERVED','CLAIM_PENDING','CLAIMED','CANCELLED')), created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS reward_claims (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), user_id uuid NOT NULL REFERENCES users(id), idempotency_key text UNIQUE NOT NULL, target_asset text NOT NULL, amount_usd numeric(38,18) NOT NULL CHECK (amount_usd > 0), state text NOT NULL CHECK (state IN ('RESERVED','CLAIM_PENDING','CLAIMED','CANCELLED')), simulation_only boolean NOT NULL DEFAULT true CHECK (simulation_only), created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS liquidity_quotes (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), provider text NOT NULL, token_in text NOT NULL, token_out text NOT NULL, quote jsonb NOT NULL, simulation_only boolean NOT NULL DEFAULT true CHECK (simulation_only), created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS settlement_plans (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), reward_claim_id uuid NOT NULL REFERENCES reward_claims(id), simulation_only boolean NOT NULL DEFAULT true CHECK (simulation_only), created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS settlement_routes (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), settlement_plan_id uuid NOT NULL REFERENCES settlement_plans(id), provider text NOT NULL, route jsonb NOT NULL, created_at timestamptz NOT NULL DEFAULT now());
+
 COMMIT;
 
 -- IMPORTANT: application logic must enforce that every POSTED ledger transaction

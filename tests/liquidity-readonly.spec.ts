@@ -1,0 +1,4 @@
+import { strict as assert } from "node:assert";
+import { CHAIN_ID,TOKENS,liveQuotes,providerSnapshot,safetyAssertion,UniswapReadOnlyAdapter } from "../lib/liquidity-readonly";
+assert.equal(CHAIN_ID,1);assert.equal(Object.keys(TOKENS).length,3,"allowlisted mainnet assets");assert.equal(new UniswapReadOnlyAdapter().executionEnabled,false,"read-only adapter");assert.ok(providerSnapshot().every(p=>p.mode==="READ ONLY"));assert.equal(safetyAssertion().passed,true,"no signing, broadcast, approval, transfer, withdrawal, or swap API");
+void (async()=>{await assert.rejects(()=>liveQuotes({chainId:1,tokenIn:"USDC",tokenOut:"USDT",amountIn:0}),/INVALID_QUOTE_INPUT/);await assert.rejects(()=>liveQuotes({chainId:2,tokenIn:"USDC",tokenOut:"USDT",amountIn:1}),/INVALID_QUOTE_INPUT/);await assert.rejects(()=>liveQuotes({chainId:1,tokenIn:"USDC",tokenOut:"USDT",amountIn:1}),/LIVE_QUOTE_UNAVAILABLE/);})().catch(error=>{throw error});
