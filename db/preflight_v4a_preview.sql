@@ -1,0 +1,6 @@
+-- Read-only V4A Preview preflight. Do not run against Production.
+SELECT current_database(), current_user;
+SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name IN ('user','session','account','verification','user_roles','schema_migrations','ledger_accounts_financial','ledger_transactions_financial','ledger_entries_financial','idempotency_records_financial','financial_audit_events','reward_funding_sources_financial','reward_programs_financial','reward_backing_allocations_financial','reward_accruals_financial','reward_claims_financial','reward_claim_reservations_financial','settlement_plans_financial','settlement_routes_financial','custody_webhook_events') ORDER BY table_name;
+SELECT id,checksum,applied_at FROM schema_migrations ORDER BY id;
+SELECT tablename,indexname,indexdef FROM pg_indexes WHERE schemaname='public' AND tablename IN ('user','session','account','verification','user_roles','audit_events') ORDER BY tablename,indexname;
+SELECT c.relname AS table_name,t.tgname AS trigger_name,pg_get_triggerdef(t.oid) AS trigger_definition FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid WHERE NOT t.tgisinternal AND c.relnamespace='public'::regnamespace ORDER BY c.relname,t.tgname;

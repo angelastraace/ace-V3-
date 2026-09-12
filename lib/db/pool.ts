@@ -1,0 +1,1 @@
+import { Pool } from "pg";const g=globalThis as typeof globalThis&{aceFinancialPool?:Pool};export function getFinancialPool(){const connectionString=process.env.ACE_DATABASE_URL?.trim();if(!connectionString)return null;return g.aceFinancialPool??=new Pool({connectionString,max:4})}

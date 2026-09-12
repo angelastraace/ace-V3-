@@ -1,0 +1,1 @@
+import { NextResponse } from "next/server";import { simulator } from "../../../../lib/liquidity-router";export const dynamic="force-dynamic";export function GET(){const {balance}=simulator().rewards;return NextResponse.json({status:"simulation",executionEnabled:false,balance:{...balance,currency:"USD"}},{headers:{"cache-control":"no-store"}})}

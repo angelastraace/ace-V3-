@@ -52,3 +52,15 @@ export function registrationDisabled() {
 export function registrationDisabledResponse() {
   return NextResponse.json({ status: "blocked", reason: "Registration is not enabled" }, { status: 503, headers: { "cache-control": "no-store" } });
 }
+
+export type ServerPrincipal = { userId:string; email:string; roles:string[]; sessionId:string; authenticated:true };
+/** Financial APIs accept only the Better Auth server session and DB-authoritative roles. */
+export async function getServerPrincipal():Promise<ServerPrincipal|null>{
+  if(process.env.AUTH_MODE!=="better-auth")return null;
+  const auth=getBetterAuth(),pool=getNeonPool();if(!auth||!pool)return null;
+  try{const {headers}=await import("next/headers");const result=await auth.api.getSession({headers:await headers()});if(!result?.user?.id||!result.user.email||!result.session?.id)return null;const roles=await pool.query<{role:string}>("SELECT role FROM user_roles WHERE user_id=$1",[result.user.id]);return{userId:result.user.id,email:result.user.email,roles:roles.rows.map(r=>r.role),sessionId:result.session.id,authenticated:true}}catch{return null}
+}
+export async function requireAuthenticatedUser(){const p=await getServerPrincipal();if(!p)throw Error("AUTHENTICATION_REQUIRED");return p}
+export async function requireRole(role:string){const p=await requireAuthenticatedUser();if(!p.roles.includes(role))throw Error("FORBIDDEN");return p}
+export async function requireAdmin(){return requireRole("admin")}
+export function assertOwnsResource(principal:ServerPrincipal,resourceUserId:string){if(principal.userId!==resourceUserId)throw Error("FORBIDDEN");return true}

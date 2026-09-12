@@ -1,0 +1,1 @@
+import{NextResponse}from"next/server";import{fundingView}from"../../../../lib/reward-funding";export function GET(){return NextResponse.json({status:"simulation",accruals:fundingView().journal.filter(x=>x.event==="reward_accrued")})}

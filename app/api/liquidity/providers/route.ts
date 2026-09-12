@@ -1,0 +1,1 @@
+import { NextResponse } from "next/server";import { providerSnapshot } from "../../../../lib/liquidity-readonly";export const dynamic="force-dynamic";export function GET(){return NextResponse.json({mode:"READ ONLY",providers:providerSnapshot()},{headers:{"cache-control":"no-store"}})}

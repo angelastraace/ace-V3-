@@ -4,3 +4,5 @@
 
 /* V2 workspace styles */
 .workspaceTitle{font-size:clamp(46px,7vw,84px);letter-spacing:-.06em;line-height:.95;margin:24px 0}.workspaceIntro{max-width:720px;color:#8aa0ba;line-height:1.65;margin:0 0 30px}.workspaceIntro+.grid{margin-bottom:18px}.panel .form{padding:18px;max-width:none}.panel .recent{margin-bottom:4px}.panel .button{border:0;cursor:pointer}.localActions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.localActions button{background:transparent;cursor:pointer}.market-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.market-controls select,.market-controls>button{min-height:40px;border:1px solid #223247;border-radius:9px;background:#0c1728;color:#d8e5f5;padding:0 10px}.market-meta{font-size:11px;color:#71849b;margin:0 0 14px}.market-unavailable button{border:1px solid #2b405a;background:transparent;color:#bcd0e8;border-radius:7px;padding:7px 9px;cursor:pointer}
+
+.form label{display:grid;gap:6px;color:#a6b6c9;font-size:12px}.form p{color:#74869d;font-size:12px;line-height:1.6}.form .button{border:0;cursor:pointer;width:max-content}
