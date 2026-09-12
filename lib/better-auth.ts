@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
+import { admin } from "better-auth/plugins";
 import { PostgresDialect } from "kysely";
 import { betterAuthDatabaseUrl, getNeonPool } from "./neon";
 import { resolveBetterAuthOrigin } from "./auth-origin";
@@ -27,7 +28,7 @@ export function getBetterAuth() {
         disableSignUp: true,
         minPasswordLength: 12,
       },
-      plugins: [nextCookies()],
+      plugins: [nextCookies(), admin({ adminRoles: ["admin"] })],
     });
   } catch {
     return null;

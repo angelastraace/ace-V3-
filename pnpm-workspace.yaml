@@ -2,6 +2,7 @@ allowBuilds:
   sharp: false
   '@prisma/client': false
   better-sqlite3: false
+  core-js: set this to true or false
 overrides:
   postcss: 8.5.23
   sharp: 0.35.4
