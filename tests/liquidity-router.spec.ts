@@ -1,5 +1,5 @@
 import { strict as assert } from "node:assert";
-import { LiquidityRouter, RiskEngine, type Adapter, simulator, simulateClaim } from "../lib/liquidity-router";
+import { LiquidityRouter, RiskEngine, type Adapter, simulator, simulateClaim, aceGlobalLiquidityArchitecture } from "../lib/liquidity-router";
 const funding=[{asset:"USDC" as const,amount:5000,usdValue:5000}];
 const router=new LiquidityRouter();const quote=router.quote("USDT",100,funding);
 assert.ok(quote.candidateRoutes.length>=4,"single-provider and multi-provider quotes");assert.equal(quote.unfilledUsd,0,"best route is fillable");assert.ok(quote.selectedRoutes[0].routeScore>=quote.candidateRoutes[1].routeScore,"best route selection");
@@ -10,3 +10,5 @@ const risk=new RiskEngine();assert.throws(()=>risk.validate([{...quote.selectedR
 assert.throws(()=>simulator().funding.assertBacking(10000),/INSUFFICIENT_APPROVED_BACKING/);assert.throws(()=>simulator().ledger.append("bad","a","b",0),/LEDGER_IMBALANCE/);
 const before=simulator().rewards.balance.reserved;assert.throws(()=>simulateClaim({idempotencyKey:"rollback",targetAsset:"USDT",amountUsd:300}),/INSUFFICIENT_VESTED_REWARD/);assert.equal(simulator().rewards.balance.reserved,before,"failed claim rollback");
 const key="router-spec-idempotency";const first=simulateClaim({idempotencyKey:key,targetAsset:"USDT",amountUsd:10});assert.equal(simulateClaim({idempotencyKey:key,targetAsset:"USDT",amountUsd:10}),first,"duplicate idempotency key");assert.throws(()=>simulateClaim({idempotencyKey:"duplicate-claim",targetAsset:"USDT",amountUsd:300}),/INSUFFICIENT_VESTED_REWARD/);
+
+const architecture=aceGlobalLiquidityArchitecture();assert.equal(architecture.rewardFundingEngine.name,"Reward Funding Engine");assert.equal(architecture.liquidityRoutingEngine.name,"Liquidity Routing Engine");assert.equal(architecture.rewardLiability.name,"Reward Liability");assert.equal(architecture.rewardFundingEngine.role,"determines ACE economic backing");assert.equal(architecture.liquidityRoutingEngine.role,"sources external DEX liquidity");assert.equal(architecture.executionModel,"just-in-time settlement");

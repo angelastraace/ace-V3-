@@ -3,9 +3,59 @@ export type Asset = "USDC"|"USDT"|"WETH";
 export type RewardState = "EARNED"|"VESTED"|"RESERVED"|"CLAIM_PENDING"|"CLAIMED"|"CANCELLED";
 export type FundingType = "PROTOCOL_REVENUE"|"SPONSOR"|"PARTNER"|"TREASURY"|"CREDIT";
 export type ProviderName = "Uniswap V3"|"Curve"|"Balancer"|"Aggregator";
+export type LiquidityPoolConnection = { provider:ProviderName; status:"simulation"|"configured"|"offline"; route:string; description:string; endpoint?:string; };
+export type ACEArchitecture = {
+  rewardFundingEngine:{name:string;role:string;status:"simulation"|"disabled";summary:string;sources:string[];};
+  rewardLiability:{name:string;role:string;status:string;summary:string;amountLabel:string;};
+  liquidityRoutingEngine:{name:string;role:string;status:"simulation"|"disabled";summary:string;providers:ProviderName[];};
+  executionModel:"just-in-time settlement";
+  connectedPools:LiquidityPoolConnection[];
+  failClosedRule:string;
+};
 export const executionEnabled = false as const;
 export const simulationMode = () => process.env.ACE_LIQUIDITY_EXECUTION_MODE === "simulation" ? "simulation" : "disabled";
 export const assets: Asset[] = ["USDC","USDT","WETH"];
+
+export function aceGlobalLiquidityArchitecture():ACEArchitecture {
+  const poolStatus = (provider:ProviderName, endpoint?:string): LiquidityPoolConnection["status"] => {
+    if (!endpoint) return "simulation";
+    return endpoint.trim().length > 0 ? "configured" : "simulation";
+  };
+
+  const connectedPools: LiquidityPoolConnection[] = [
+    { provider: "Uniswap V3", status: poolStatus("Uniswap V3", process.env.ACE_LIQUIDITY_POOL_UNISWAP_URL), route: "USDC → USDT / WETH → USDT", description: "Primary external DEX execution liquidity.", endpoint: process.env.ACE_LIQUIDITY_POOL_UNISWAP_URL },
+    { provider: "Curve", status: poolStatus("Curve", process.env.ACE_LIQUIDITY_POOL_CURVE_URL), route: "USDC / USDT stable conversion", description: "Low-slippage stablecoin routing source.", endpoint: process.env.ACE_LIQUIDITY_POOL_CURVE_URL },
+    { provider: "Balancer", status: poolStatus("Balancer", process.env.ACE_LIQUIDITY_POOL_BALANCER_URL), route: "WETH / USDC / USDT route balancing", description: "Secondary multi-asset execution path.", endpoint: process.env.ACE_LIQUIDITY_POOL_BALANCER_URL },
+    { provider: "Aggregator", status: poolStatus("Aggregator", process.env.ACE_LIQUIDITY_POOL_AGGREGATOR_URL), route: "Best route across providers", description: "Fallback route selection and optimizer.", endpoint: process.env.ACE_LIQUIDITY_POOL_AGGREGATOR_URL }
+  ];
+
+  return {
+    rewardFundingEngine: {
+      name: "Reward Funding Engine",
+      role: "determines ACE economic backing",
+      status: simulationMode() === "simulation" ? "simulation" : "disabled",
+      summary: "Determines what ACE actually owes.",
+      sources: ["protocol revenue", "sponsor funding", "partner revenue", "treasury", "approved credit"]
+    },
+    rewardLiability: {
+      name: "Reward Liability",
+      role: "captures the internal value ACE owes to users",
+      status: "accrued",
+      summary: "Reward-denominated liability that is settled against approved backing.",
+      amountLabel: "USD-denominated liability"
+    },
+    liquidityRoutingEngine: {
+      name: "Liquidity Routing Engine",
+      role: "sources external DEX liquidity",
+      status: simulationMode() === "simulation" ? "simulation" : "disabled",
+      summary: "Finds the cheapest external route for the actual reward asset conversion.",
+      providers: ["Uniswap V3", "Curve", "Balancer", "Aggregator"]
+    },
+    executionModel: "just-in-time settlement",
+    connectedPools,
+    failClosedRule: "If no configured route clears slippage, depth, and oracle checks, the claim is rejected and no reward is paid."
+  };
+}
 const usd: Record<Asset,number> = {USDC:1,USDT:1,WETH:2500};
 export type FundingAsset = { asset:Asset; amount:number; usdValue:number };
 export type Route = { provider:ProviderName; tokenIn:Asset; tokenOut:Asset; amountIn:number; amountOut:number; price:number; fee:number; estimatedGas:number; slippageBps:number; liquidityDepth:number; priceImpactBps:number; routeScore:number; quoteAt:string; executionEnabled:false };

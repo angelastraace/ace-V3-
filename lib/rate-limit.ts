@@ -3,6 +3,12 @@ import { NextResponse } from "next/server";
 const WINDOW_SECONDS = 60;
 const MAX_REQUESTS_PER_WINDOW = 10;
 
+const LOCAL_RATE_LIMIT_STATE = new Map<string, { count: number; windowStart: number }>();
+
+declare global {
+  var __aceLocalRateLimitCleanup: ReturnType<typeof setInterval> | undefined;
+}
+
 function unavailable() {
   return NextResponse.json({ status: "blocked", reason: "Rate-limit service unavailable" }, { status: 503 });
 }
@@ -13,6 +19,10 @@ function configured() {
   return url && token ? { url, token } : null;
 }
 
+function isLocalDevelopmentEnvironment() {
+  return process.env.NODE_ENV === "development" && !process.env.VERCEL_ENV;
+}
+
 function isPreviewUpstash(url: string) {
   try {
     return process.env.VERCEL_ENV === "preview" && new URL(url).hostname.endsWith(".upstash.io");
@@ -21,11 +31,42 @@ function isPreviewUpstash(url: string) {
   }
 }
 
+function cleanupLocalRateLimitEntries() {
+  const now = Date.now();
+  for (const [key, entry] of LOCAL_RATE_LIMIT_STATE.entries()) {
+    if (now - entry.windowStart >= WINDOW_SECONDS * 1000) {
+      LOCAL_RATE_LIMIT_STATE.delete(key);
+    }
+  }
+}
+
+if (!globalThis.__aceLocalRateLimitCleanup) {
+  globalThis.__aceLocalRateLimitCleanup = setInterval(cleanupLocalRateLimitEntries, 30_000);
+}
+
 async function rateLimitKey(bucket: string, ip: string) {
   const input = new TextEncoder().encode(`${bucket}:${ip}`);
   const digest = await crypto.subtle.digest("SHA-256", input);
   const fingerprint = Array.from(new Uint8Array(digest), (value) => value.toString(16).padStart(2, "0")).join("");
   return `ace:rate-limit:${bucket}:${fingerprint}`;
+}
+
+async function checkLocalRateLimit(bucket: string, ip: string) {
+  const key = await rateLimitKey(bucket, ip);
+  const now = Date.now();
+  const entry = LOCAL_RATE_LIMIT_STATE.get(key);
+
+  if (!entry || now - entry.windowStart >= WINDOW_SECONDS * 1000) {
+    LOCAL_RATE_LIMIT_STATE.set(key, { count: 1, windowStart: now });
+    return null;
+  }
+
+  if (entry.count >= MAX_REQUESTS_PER_WINDOW) {
+    return NextResponse.json({ status: "rate_limited" }, { status: 429, headers: { "retry-after": String(WINDOW_SECONDS) } });
+  }
+
+  entry.count += 1;
+  return null;
 }
 
 async function checkUpstash(url: string, token: string, bucket: string, ip: string) {
@@ -59,8 +100,13 @@ async function checkAdapter(url: string, token: string, bucket: string, ip: stri
   return null;
 }
 
-/** Sensitive endpoints fail closed. Preview supports a direct Upstash REST database; other environments retain the ACE adapter contract. */
+/** Sensitive endpoints fail closed. Local Codespaces development uses an in-memory limiter, while Preview/Production require the configured external service. */
 export async function enforceRateLimit(req: Request, bucket: string) {
+  if (isLocalDevelopmentEnvironment()) {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    return checkLocalRateLimit(bucket, ip);
+  }
+
   const service = configured();
   if (!service) return NextResponse.json({ status: "blocked", reason: "Rate limiting not configured" }, { status: 503 });
 
