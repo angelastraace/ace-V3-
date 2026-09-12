@@ -1,7 +1,7 @@
 /** TEMPORARY: Preview-only V4A validation. All mutation probes run inside ROLLBACK transactions. */
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { Pool } from "pg";
-const branch="vercel-agent/ace-financial-foundation-v4a";
+const branch="vercel-agent/ace-v4a-preview-validation";
 type Result={pass:boolean;detail?:string};const pass=(detail?:string):Result=>({pass:true,detail}),fail=(detail:string):Result=>({pass:false,detail});
 function gate(signature:string|null){const secret=process.env.ACE_V4A_VALIDATION_SECRET;if(process.env.VERCEL_ENV!=="preview"||process.env.VERCEL_GIT_COMMIT_REF!==branch||process.env.ACE_V4A_VALIDATION_ENABLED!=="true"||!secret||!signature)return false;const expected=createHmac("sha256",secret).update("v4a-validation").digest("hex");return signature.length===expected.length&&timingSafeEqual(Buffer.from(signature),Buffer.from(expected));}
 async function identity(url:string){const pool=new Pool({connectionString:url,max:1});try{const q=await pool.query<{database:string;user:string}>("SELECT current_database() AS database,current_user AS user");return{pass:q.rows[0]?.database==="neondb"&&q.rows[0]?.user==="ace_exchange_runtime",database:q.rows[0]?.database,user:q.rows[0]?.user}}catch{return{pass:false}}finally{await pool.end()}}
