@@ -1,0 +1,12 @@
+import { strict as assert } from "node:assert";
+import { LiquidityRouter, RiskEngine, type Adapter, simulator, simulateClaim } from "../lib/liquidity-router";
+const funding=[{asset:"USDC" as const,amount:5000,usdValue:5000}];
+const router=new LiquidityRouter();const quote=router.quote("USDT",100,funding);
+assert.ok(quote.candidateRoutes.length>=4,"single-provider and multi-provider quotes");assert.equal(quote.unfilledUsd,0,"best route is fillable");assert.ok(quote.selectedRoutes[0].routeScore>=quote.candidateRoutes[1].routeScore,"best route selection");
+const split=router.quote("USDT",150,[{asset:"USDC",amount:100,usdValue:100},{asset:"WETH",amount:.02,usdValue:50}]);assert.ok(split.selectedRoutes.length===2,"split-route selection");
+assert.equal(router.quote("USDT",500000,[{asset:"USDC",amount:500000,usdValue:500000}]).candidateRoutes.length,0,"insufficient liquidity");
+const unavailable:Adapter={name:"Curve",executionEnabled:false,getProviderStatus:()=>({status:"unavailable",supportedAssets:[]}),getSupportedAssets:()=>[],getQuote:()=>null,estimateGas:()=>0,estimateSlippage:()=>0,getAvailableLiquidity:()=>0,simulateSwap:()=>null,healthCheck:()=>false};assert.equal(new LiquidityRouter([unavailable]).quote("USDT",10,funding).candidateRoutes.length,0,"provider outage");
+const risk=new RiskEngine();assert.throws(()=>risk.validate([{...quote.selectedRoutes[0],slippageBps:101}],100),/EXCESSIVE_SLIPPAGE/);assert.throws(()=>risk.validate([{...quote.selectedRoutes[0],priceImpactBps:101}],100),/EXCESSIVE_PRICE_IMPACT/);assert.throws(()=>risk.validate([{...quote.selectedRoutes[0],quoteAt:new Date(0).toISOString()}],100),/STALE_QUOTE/);
+assert.throws(()=>simulator().funding.assertBacking(10000),/INSUFFICIENT_APPROVED_BACKING/);assert.throws(()=>simulator().ledger.append("bad","a","b",0),/LEDGER_IMBALANCE/);
+const before=simulator().rewards.balance.reserved;assert.throws(()=>simulateClaim({idempotencyKey:"rollback",targetAsset:"USDT",amountUsd:300}),/INSUFFICIENT_VESTED_REWARD/);assert.equal(simulator().rewards.balance.reserved,before,"failed claim rollback");
+const key="router-spec-idempotency";const first=simulateClaim({idempotencyKey:key,targetAsset:"USDT",amountUsd:10});assert.equal(simulateClaim({idempotencyKey:key,targetAsset:"USDT",amountUsd:10}),first,"duplicate idempotency key");assert.throws(()=>simulateClaim({idempotencyKey:"duplicate-claim",targetAsset:"USDT",amountUsd:300}),/INSUFFICIENT_VESTED_REWARD/);

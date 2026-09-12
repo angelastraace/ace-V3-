@@ -4,7 +4,7 @@ const protectedPrefixes = [
   "/account", "/dashboard", "/profile", "/settings", "/notifications", "/verification",
   "/transactions", "/orders", "/wallet/deposit", "/wallet/withdraw", "/wallet/address-book",
   "/card/manage", "/card/apply", "/creator-hub", "/governance/vote", "/admin",
-  "/api/orders", "/api/wallet", "/api/fiat", "/api/card", "/api/kyc", "/api/governance/vote", "/api/community/post", "/api/creator/payout",
+  "/api/orders", "/api/rewards", "/api/wallet", "/api/fiat", "/api/card", "/api/kyc", "/api/governance/vote", "/api/community/post", "/api/creator/payout",
 ];
 
 type SessionValidation = {
@@ -91,6 +91,6 @@ export const config = {
     "/account/:path*", "/dashboard/:path*", "/profile/:path*", "/settings/:path*", "/notifications/:path*", "/verification/:path*",
     "/transactions/:path*", "/orders/:path*", "/wallet/deposit/:path*", "/wallet/withdraw/:path*", "/wallet/address-book/:path*",
     "/card/manage/:path*", "/card/apply/:path*", "/creator-hub/:path*", "/governance/vote/:path*", "/admin/:path*",
-    "/api/orders/:path*", "/api/wallet/:path*", "/api/fiat/:path*", "/api/card/:path*", "/api/kyc/:path*", "/api/governance/vote/:path*", "/api/community/post/:path*", "/api/creator/payout/:path*",
+    "/api/orders/:path*", "/api/rewards/:path*", "/api/wallet/:path*", "/api/fiat/:path*", "/api/card/:path*", "/api/kyc/:path*", "/api/governance/vote/:path*", "/api/community/post/:path*", "/api/creator/payout/:path*",
   ],
 };
