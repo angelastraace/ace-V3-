@@ -1,0 +1,1 @@
+import { NextResponse } from "next/server";import { assets, executionEnabled, simulationMode } from "../../../../lib/liquidity-router";export function GET(){return NextResponse.json({assets,executionEnabled,mode:simulationMode()})}

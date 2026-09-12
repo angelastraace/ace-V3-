@@ -1,0 +1,1 @@
+import { NextResponse } from "next/server";import { simulator } from "../../../../lib/liquidity-router";export function GET(){return NextResponse.json({status:"simulation",claims:simulator().ledger.entries.filter(e=>e.type==="reward_reservation")},{headers:{"cache-control":"no-store"}})}

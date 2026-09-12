@@ -1,0 +1,1 @@
+import{NextResponse}from"next/server";import{requireInternalStatusAccess}from"../../../../../lib/internal-access";import{fundingView}from"../../../../../lib/reward-funding";export function GET(req:Request){const d=requireInternalStatusAccess(req);return d||NextResponse.json({sponsors:fundingView().sources.filter(s=>s.type==="SPONSOR"||s.type==="PARTNER")})}
