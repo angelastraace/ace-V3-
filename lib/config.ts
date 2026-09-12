@@ -1,9 +1,11 @@
+import { resolveBetterAuthOrigin } from "./auth-origin";
+
 export type FeatureKey =
   | "registration" | "trading" | "deposits" | "withdrawals" | "fiat" | "card" | "governanceVoting"
   | "creatorPayouts" | "marketplace" | "communityWrites" | "advancedTrading" | "adminDashboard";
 
 const enabled = (name: string) => process.env[name] === "true";
-const configured = (...values: Array<string | undefined>) => values.every((value) => Boolean(value?.trim()));
+const configured = (...values: Array<string | null | undefined>) => values.every((value) => Boolean(value?.trim()));
 
 export const featureFlags: Record<FeatureKey, boolean> = {
   registration: enabled("ENABLE_REGISTRATION"),
@@ -28,9 +30,12 @@ export const approvalGates = {
   financialProviderValidationApproved: enabled("FINANCIAL_PROVIDER_VALIDATION_APPROVED"),
 };
 
+export const authMode = process.env.AUTH_MODE === "better-auth" ? "better-auth" : "legacy";
+const betterAuthConfigured = configured(process.env.BETTER_AUTH_DATABASE_URL, process.env.BETTER_AUTH_SECRET, resolveBetterAuthOrigin());
+
 export const providerConfig = {
-  database: configured(process.env.DATABASE_URL),
-  auth: configured(process.env.AUTH_SERVICE_URL, process.env.AUTH_SERVICE_TOKEN),
+  database: authMode === "better-auth" ? configured(process.env.BETTER_AUTH_DATABASE_URL) : configured(process.env.DATABASE_URL),
+  auth: authMode === "better-auth" ? betterAuthConfigured : configured(process.env.AUTH_SERVICE_URL, process.env.AUTH_SERVICE_TOKEN),
   custody: configured(process.env.CUSTODY_API_URL, process.env.CUSTODY_API_KEY),
   ledger: configured(process.env.LEDGER_SERVICE_URL, process.env.LEDGER_SERVICE_TOKEN),
   marketData: configured(process.env.MARKET_DATA_PROVIDER_URL, process.env.MARKET_DATA_PROVIDER_TOKEN),

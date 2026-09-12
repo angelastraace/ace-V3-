@@ -16,15 +16,24 @@
     "routes": "node scripts/route-report.mjs",
     "preflight": "npm run audit && npm run security:audit && npm run env:check && npm run links:audit && npm run routes",
     "verify": "npm run typecheck && npm run build && npm run preflight",
-    "links:audit": "node scripts/link-audit.mjs"
+    "links:audit": "node scripts/link-audit.mjs",
+    "db:migrate": "node scripts/migrate.mjs",
+    "db:migrate:check": "node scripts/migrate-check.mjs",
+    "db:migrate:connection-check": "node scripts/migration-connection-test.mjs",
+    "preview:user:create": "node scripts/provision-preview-user.mjs",
+    "auth:cutover:check": "node scripts/auth-cutover-check.mjs"
   },
   "dependencies": {
+    "better-auth": "^1.7.4",
+    "kysely": "^0.29.5",
     "next": "16.3.3",
+    "pg": "^8.23.0",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@types/node": "24.10.1",
+    "@types/pg": "^8.23.1",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
     "typescript": "5.9.3"
